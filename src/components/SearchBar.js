@@ -3,16 +3,15 @@ import React from 'react';
 class SearchBar extends React.Component {
     state = { term: '' };
 
-    //Стрелочные функции не содержат собственный контекст this, а используют значение this окружающего контекста.
-    onFormSubmit = (event) => {
+    onFormSubmit(event){
         event.preventDefault();
         console.log(this.state.term);
     }
-
+    // Стрелочные функции не содержат собственный контекст this, а используют значение this окружающего контекста.
     render() {
         return (
             <div className="ui segment">
-                <form onSubmit={this.onFormSubmit} className="ui form">
+                <form onSubmit={(e)=>this.onFormSubmit(e)} className="ui form">
                     <div className="field">
                         <label htmlFor="">Image Search</label>
                         <input
