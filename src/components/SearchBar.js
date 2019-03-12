@@ -3,13 +3,8 @@ import React from 'react';
 class SearchBar extends React.Component {
     state = { term: '' };
 
-    constructor(props){
-        super(props);
-        //bind жёстко привязывает контекст для функции, предотвращая потерю контекста
-        this.onFormSubmit = this.onFormSubmit.bind(this);
-    }
-
-    onFormSubmit(event){
+    //Стрелочные функции не содержат собственный контекст this, а используют значение this окружающего контекста.
+    onFormSubmit = (event) => {
         event.preventDefault();
         console.log(this.state.term);
     }
