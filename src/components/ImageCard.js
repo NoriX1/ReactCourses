@@ -1,25 +1,27 @@
 import React from 'react';
 
-class ImageCard extends React.Component{
-    constructor(props){
+class ImageCard extends React.Component {
+    constructor(props) {
         super(props);
-
+        this.state = { spans: 0 };
         //Ref ипользуется для получения доступа к конкретному элементу React
         //Заменяет собой получение элемента через document.querySelector()
         this.imageRef = React.createRef();
     }
 
-    componentDidMount(){
-        console.log(this.imageRef);
-        //Из-за того, что в данный момент изображение ещё не загрузилось
-        //Вместо реальной высоты изображения мы увидим 0
-        console.log(this.imageRef.current.clientHeight);
+    componentDidMount() {
+        this.imageRef.current.addEventListener('load', this.setSpans);
     }
-    render(){
-        const {description, urls} = this.props.image;
+    setSpans = () => {
+        const height = this.imageRef.current.clientHeight;
+        const spans = Math.ceil(height / 10);
+        this.setState({ spans });
+    }
+    render() {
+        const { description, urls } = this.props.image;
         return (
-            <div>
-                <img ref={this.imageRef} src={urls.regular} alt={description}/>
+            <div style = {{gridRowEnd: `span ${this.state.spans}`}}>
+                <img ref={this.imageRef} src={urls.regular} alt={description} />
             </div>
         );
     }
