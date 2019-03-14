@@ -1,28 +1,47 @@
 // Import react and react-dom
 import React from 'react';
 import ReactDOM from 'react-dom';
-import faker from 'faker';
-import CommentDetail from './CommentDetail';
-import ApprovalCard from './ApprovalCard';
+import SeasonDisplay from './SeasonDisplay';
+import Spinner from './Spinner';
+import UserForm from './UserForm';
+import Clock from './Clock';
 
-const App = () => {
-    return (
-        <div className="ui container comments">
-            <ApprovalCard>
-                <h4>Warning!</h4>
-                <div>Are you sure you want to do this?</div>
-            </ApprovalCard>
-            <ApprovalCard>
-                <CommentDetail author="Sam" timeAgo="Today at 3:00PM" text="Lorem ipsum dolor sit." avatar={faker.image.avatar()} />
-            </ApprovalCard>
-            <ApprovalCard>
-                <CommentDetail author="Alex" timeAgo="Today at 4:00PM" text="Lorem ipsum dolor." avatar={faker.image.avatar()} />
-            </ApprovalCard>
-            <ApprovalCard>
-                <CommentDetail author="Jane" timeAgo="Today at 5:00PM" text="Lorem ipsum." avatar={faker.image.avatar()} />
-            </ApprovalCard>
-        </div>
-    );
-};
+class App extends React.Component {
+    state = { lat: null, errorMessage: '' };
+
+    componentDidMount() {
+        window.navigator.geolocation.getCurrentPosition(
+            (position) => {
+                this.setState({ lat: position.coords.latitude });
+            },
+            (err) => {
+                this.setState({ errorMessage: err.message });
+            }
+        );
+    }
+
+    renderContent() {
+        if (this.state.errorMessage && !this.state.lat) {
+            return (
+                <div>
+                    <div>Error: {this.state.errorMessage}</div>
+                    <UserForm/>
+                    <Clock/>
+                </div>
+            );
+        }
+        if (!this.state.errorMessage && this.state.lat) {
+            return <SeasonDisplay lat={this.state.lat} />;
+        }
+
+        return <Spinner message="Please accept location request" />;
+    }
+
+    render() {
+        return (
+            <div className="border red">{this.renderContent()}</div>
+        );
+    }
+}
 
 ReactDOM.render(<App />, document.querySelector('#root'));
