@@ -1,26 +1,48 @@
 import React from 'react';
-import unsplash from '../api/unsplash';
 import SearchBar from './SearchBar';
-import ImageList from './ImageList';
+import youtube from '../apis/youtube';
+import VideoList from './VideoList';
+import VideoDetail from './VideoDetail';
 
 class App extends React.Component {
-    state = { images: [] };
-    onSearchSubmit = async (term) => {
-        const response = await unsplash.get('/search/photos', {
-            params: { query: term },
-        });
+    state = { videos: [], selectedVideo: null };
 
-        this.setState({ images: response.data.results });
+    componentDidMount(){
+        this.onSearchSubmit('buildings');
+    }
+
+    onSearchSubmit = async term => {
+        const response = await youtube.get('/search', {
+            params: { q: term }
+        });
+        this.setState({
+            videos: response.data.items,
+            selectedVideo: response.data.items[0]
+        });
+    }
+
+    onVideoSelect = (video) => {
+        this.setState({ selectedVideo: video });
+
     }
 
     render() {
         return (
-            <div className="ui container" style={{ marginTop: '10px' }}>
+            <div className="ui container">
                 <SearchBar onSubmit={this.onSearchSubmit} />
-                <ImageList images={this.state.images} />
+                <div className="ui grid">
+                    <div className="ui row">
+                        <div className="eleven wide column">
+                            <VideoDetail video={this.state.selectedVideo} />
+                        </div>
+                        <div className="five wide column">
+                            <VideoList videos={this.state.videos} onVideoSelect={this.onVideoSelect} />
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
-};
+}
 
 export default App;
